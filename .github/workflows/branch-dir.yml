@@ -1,30 +1,17 @@
-name: Branch Directory Info
+name: CI Workflow
 
 on:
   push:
-    branches: 
+    branches:
       - dev
       - staging
-  workflow_dispatch:
 
 jobs:
-  show-directory:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Show directory info
-        shell: bash
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
-            echo "=== Development Branch ==="
-            pwd
-            ls -la
-          fi
-          
-          if [ "${{ github.ref }}" = "refs/heads/staging" ]; then
-            echo "=== Staging Branch ==="
-            pwd
-            ls -la
-          fi
+      - name: Display branch name
+        run: echo "This workflow is running on branch: ${{ github.ref }}"
