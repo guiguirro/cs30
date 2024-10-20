@@ -1,0 +1,26 @@
+name: Simple Branch Info
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'dev'
+
+jobs:
+  display-branch-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Display branch information
+        run: |
+          if [[ "${{ github.event.inputs.branch }}" == "dev" ]]; then
+            echo "This workflow is running for the development branch (dev)."
+          elif [[ "${{ github.event.inputs.branch }}" == "staging" ]]; then
+            echo "This workflow is running for the staging branch."
+          else
+            echo "This workflow is running for an unrecognized branch."
+          fi
