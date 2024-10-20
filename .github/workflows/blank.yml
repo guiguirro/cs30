@@ -1,0 +1,24 @@
+name: sup
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+
+jobs:
+  display-branch-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Display branch information
+        run: |
+          if [[ "${{ github.ref_name }}" == "dev" ]]; then
+            echo "Este workflow está rodando na branch de desenvolvimento (dev)."
+          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
+            echo "Este workflow está rodando na branch de staging."
+          else
+            echo "Branch não reconhecida."
+          fi
