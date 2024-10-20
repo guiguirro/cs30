@@ -1,0 +1,30 @@
+name: Branch Directory Info
+
+on:
+  push:
+    branches: 
+      - dev
+      - staging
+  workflow_dispatch:
+
+jobs:
+  show-directory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show directory info
+        shell: bash
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+            echo "=== Development Branch ==="
+            pwd
+            ls -la
+          fi
+          
+          if [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            echo "=== Staging Branch ==="
+            pwd
+            ls -la
+          fi
