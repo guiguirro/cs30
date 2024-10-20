@@ -1,10 +1,19 @@
-name: CI
-on: push
+name: Branch Info Workflow
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+
 jobs:
-  build:
+  display-branch-info:
     runs-on: ubuntu-latest
     steps:
-      - name: Git checkout
-        uses: actions/checkout@v1
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF##*/}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Display branch information
+        run: |
+          echo "Este workflow está rodando na branch: ${{ github.ref }}"
+          echo "Nome curto da branch: ${{ github.ref_name }}"
