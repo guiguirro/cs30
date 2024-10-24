@@ -1,0 +1,46 @@
+# .github/workflows/deploy-ec2-instance.yml
+
+name: Deploy EC2 Instance
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: AWS Region
+        required: true
+        default: ${{ variables.AWS_REGION }}
+      ami:
+        description: Amazon Machine Image (AMI) ID
+        required: true
+        default: ${{ variables.EC2_AMI }}
+      instance-type:
+        description: EC2 Instance Type
+        required: true
+        default: ${{ variables.EC2_AMI }}
+      key-pair:
+        description: SSH Key Pair Name
+        required: true
+        default: ${{ variables.EC2_AMI }}
+      security-group:
+        description: Security Group ID
+        required: true
+        default: ${{ variables.EC2_SECURITY_GROUP }}
+
+jobs:
+  deploy-ec2-instance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.region }}
+
+      - name: Deploy EC2 Instance
+        run: |
+          echo "Deploying EC2 instance in ${{ inputs.region }} region"
+          aws ec2 run-instances --image-id ${{ inputs.ami }} --instance-type ${{ inputs.instance-type }} --key-name ${{ inputs.key-pair }} --security-group-ids ${{ inputs.security-group }} --region ${{ inputs.region }}
