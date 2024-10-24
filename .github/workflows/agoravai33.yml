@@ -16,7 +16,7 @@ on:
       instance-type:
         description: EC2 Instance Type
         required: true
-        default: ${{ vars.EC2_AMI }}
+        default: ${{ vars.EC2_INSTANCE_TYPE }}
       key-pair:
         description: SSH Key Pair Name
         required: true
