@@ -1,25 +1,58 @@
 name: Deploy EC2 Instance
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:  # This allows manual triggering of the workflow with inputs
+
+inputs:
+  image_id:
+    description: 'AMI ID'
+    required: true
+    default: 'ami-0866a3c8686eaeeba'
+  instance_type:
+    description: 'Instance Type'
+    required: true
+    default: 't2.micro'
+  key_name:
+    description: 'Key Pair Name'
+    required: true
+    default: 'GIT'
+  security_group_id:
+    description: 'Security Group ID'
+    required: true
+    default: 'sg-073358f05d6d35f4b'
+  subnet_id:
+    description: 'Subnet ID'
+    required: true
+    default: 'subnet-00535fc3008d42be5'
+  instance_name:
+    description: 'Instance Name'
+    required: true
+    default: 'MyInstance'
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v3
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        
-    - name: Launch EC2 instance
-      run: |
-        aws ec2 run-instances --image-id ami-0866a3c8686eaeeba --instance-type t2.micro --key-name GIT --security-group-ids sg-073358f05d6d35f4b --subnet-id subnet-00535fc3008d42be5 --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Launch EC2 Instance
+        run: |
+          aws ec2 run-instances --image-id ${{ github.event.inputs.image_id }} \
+            --instance-type ${{ github.event.inputs.instance_type }} \
+            --key-name ${{ github.event.inputs.key_name }} \
+            --security-group-ids ${{ github.event.inputs.security_group_id }} \
+            --subnet-id ${{ github.event.inputs.subnet_id }} \
+            --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value="${{ github.event.inputs.instance_name }}" }]'
