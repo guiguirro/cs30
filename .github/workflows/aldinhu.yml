@@ -1,0 +1,35 @@
+name: Deploy EC2 Instance
+
+on:
+  push:
+    branches:
+      - main
+env:
+  AWS_REGION: us-east-1
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  IMAGE_ID: ami-0866a3c8686eaeeba
+  INSTANCE_TYPE: t2.micro
+  KEY_NAME: GIT
+  SECURITY_GROUP_ID: sg-073358f05d6d35f4b
+  SUBNET_ID: subnet-00535fc3008d42be5
+  INSTANCE_NAME: ALDINHO
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        
+    - name: Launch EC2 instance
+      run: |
+        aws ec2 run-instances --image-id $IMAGE_ID --instance-type $INSTANCE_TYPE --key-name $KEY_NAME --security-group-ids $SECURITY_GROUP_ID --subnet-id $SUBNET_ID --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value='"$INSTANCE_NAME"'}]'
