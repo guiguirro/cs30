@@ -1,0 +1,59 @@
+# File: .github/workflows/deploy-ec2-instance.yml
+
+name: Deploy EC2 Instance
+
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: AWS Region
+        required: true
+        default: ${{ env.DEFAULT_REGION }}
+      ami:
+        description: Amazon Machine Image (AMI) ID
+        required: true
+        default: ${{ env.DEFAULT_AMI }}
+      instance-type:
+        description: EC2 Instance Type
+        required: true
+        default: ${{ env.DEFAULT_INSTANCE_TYPE }}
+      key-pair:
+        description: SSH Key Pair Name
+        required: true
+        default: ${{ env.DEFAULT_KEY_PAIR }}
+      security-group:
+        description: Security Group ID
+        required: true
+        default: ${{ env.DEFAULT_SECURITY_GROUP }}
+
+env:
+  DEFAULT_REGION: 'us-west-2'
+  DEFAULT_AMI: 'ami-abcd1234'
+  DEFAULT_INSTANCE_TYPE: 't2.micro'
+  DEFAULT_KEY_PAIR: 'my-ssh-key'
+  DEFAULT_SECURITY_GROUP: 'sg-12345678'
+
+jobs:
+  deploy-ec2-instance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ github.event.inputs.region }}
+
+      - name: Deploy EC2 Instance
+        env:
+          AWS_REGION: ${{ github.event.inputs.region }}
+          AMI: ${{ github.event.inputs.ami }}
+          INSTANCE_TYPE: ${{ github.event.inputs.instance-type }}
+          KEY_PAIR: ${{ github.event.inputs.key-pair }}
+          SECURITY_GROUP: ${{ github.event.inputs.security-group }}
+        run: |
+          echo "Deploying EC2 instance in ${AWS_REGION} region"
+          aws ec2 run-instances --image-id $AMI --instance-type $INSTANCE_TYPE --key-name $KEY_PAIR --security-group-ids $SECURITY_GROUP --region $AWS_REGION
