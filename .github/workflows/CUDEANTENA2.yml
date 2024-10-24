@@ -20,8 +20,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-- name: Launch EC2 instance
-  run: |
+    - name: Launch EC2 instance
+    run: |
     # Variables
     INSTANCE_TYPE="t2.micro"  # Change this to your desired instance type
     AMI_ID="ami-0866a3c8686eaeeba"  # Replace with your desired AMI ID
