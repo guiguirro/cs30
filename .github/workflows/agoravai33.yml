@@ -8,23 +8,23 @@ on:
       region:
         description: AWS Region
         required: true
-        default: ${{ variables.AWS_REGION }}
+        default: ${{ vars.AWS_REGION }}
       ami:
         description: Amazon Machine Image (AMI) ID
         required: true
-        default: ${{ variables.EC2_AMI }}
+        default: ${{ vars.EC2_AMI }}
       instance-type:
         description: EC2 Instance Type
         required: true
-        default: ${{ variables.EC2_AMI }}
+        default: ${{ vars.EC2_AMI }}
       key-pair:
         description: SSH Key Pair Name
         required: true
-        default: ${{ variables.EC2_AMI }}
+        default: ${{ vars.EC2_AMI }}
       security-group:
         description: Security Group ID
         required: true
-        default: ${{ variables.EC2_SECURITY_GROUP }}
+        default: ${{ vars.EC2_SECURITY_GROUP }}
 
 jobs:
   deploy-ec2-instance:
