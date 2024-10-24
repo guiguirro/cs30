@@ -23,6 +23,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
       
-      - name: Create S3 Bucket
-        run: |
-          aws s3api create-bucket --bucket my-bucket --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1
+    - name: Launch EC2 instance
+      run: |
+        aws ec2 run-instances \
+          --image-id ami-0866a3c8686eaeeba \  # ID da imagem, pode ser diferente na sua região
+          --instance-type t2.micro \
+          --key-name key \
+          --security-group-ids sg-073358f05d6d35f4b \
+          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyInstance}]'
