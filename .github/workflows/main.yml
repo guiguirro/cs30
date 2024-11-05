@@ -1,0 +1,33 @@
+name: Ask for input and store in variable
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'What is your username?'
+        required: true
+      environment:
+        description: 'What is your environment?'
+        required: true
+        default: 'dev'
+
+jobs:
+  store-input:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print username
+        run: |
+          echo "Your username is: $USERNAME"
+          echo "Your environment is: $ENVIRONMENT"
+        env:
+          USERNAME: ${{ inputs.username }}
+          ENVIRONMENT: ${{ inputs.environment }}
+      - name: Store input in variable
+        run: |
+          echo "USERNAME=${{ inputs.username }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+
+      - name: Test variable
+        run: |
+          echo "Your stored username is: $USERNAME"
+          echo "Your stored environment is: $ENVIRONMENT"
